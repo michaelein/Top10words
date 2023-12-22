@@ -8,33 +8,20 @@ import (
 	"time"
 )
 
-func main() {
-	// Record the start time
-	startTime := time.Now()
-	// Load configuration from file
-	config, err := config2.LoadConfig("./config/config.yaml") // Adjust the file extension based on your configuration file format
+func downloadAndReadFile(config config2.Config) ([]string, error) {
+	// Download file
+	err := downloadFile(config.FileURL, config.OutputPath)
 	if err != nil {
-		fmt.Println("Error loading config:", err)
-		return
+		return nil, fmt.Errorf("error downloading file: %v", err)
 	}
 
-	batchSize := config.BatchSize
-	err = downloadFile(config.FileURL, config.OutputPath)
+	// Read URLs from file
+	file, err := os.Open(config.OutputPath)
 	if err != nil {
-		fmt.Println("Error:", err)
-		return
-	}
-
-	filePath := "urls.txt"
-	// Open the file
-	file, err := os.Open(filePath)
-	if err != nil {
-		fmt.Println("Error opening file:", err)
-		return
+		return nil, fmt.Errorf("error opening file: %v", err)
 	}
 	defer file.Close()
 
-	// Read the file line by line
 	var urls []string
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
@@ -42,7 +29,23 @@ func main() {
 	}
 
 	if err := scanner.Err(); err != nil {
-		fmt.Println("Error reading file:", err)
+		return nil, fmt.Errorf("error reading file: %v", err)
+	}
+
+	return urls, nil
+}
+func main() {
+	startTime := time.Now()
+	config, err := config2.LoadConfig("./config/config.yaml") // Adjust the file extension based on your configuration file format
+	if err != nil {
+		fmt.Println("Error loading config:", err)
+		return
+	}
+
+	batchSize := config.BatchSize
+	urls, err := downloadAndReadFile(config)
+	if err != nil {
+		fmt.Println("Error:", err)
 		return
 	}
 	totalCount := 0
