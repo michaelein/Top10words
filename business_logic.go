@@ -52,7 +52,6 @@ func filterInvalidWords(words []string) []string {
 }
 
 func isValidWord(word string) bool {
-	// Check if the word contains at least 3 alphabetic characters
 	if len(word) >= 3 {
 		for _, char := range word {
 			if !unicode.IsLetter(char) {

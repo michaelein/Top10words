@@ -26,7 +26,6 @@ func main() {
 		if end > len(urls) {
 			end = len(urls)
 		}
-
 		batch := urls[i:end]
 		totalCount = totalCount + len(batch)
 		fmt.Printf("totalCount: %v\n", totalCount)
