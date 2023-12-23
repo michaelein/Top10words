@@ -45,7 +45,6 @@ func filterInvalidWords(words []string) []string {
 	var validWords []string
 
 	for _, word := range words {
-		// Check if the word is valid
 		if isValidWord(word) {
 			validWords = append(validWords, word)
 		}
@@ -93,7 +92,6 @@ func fetchEssay(url string, wg *sync.WaitGroup) {
 func tokenizeAndCount(words []string) {
 	shardIndex := getShardIndex(strings.Join(words, ""))
 
-	// Acquire the mutex for the specific shard
 	mutexes[shardIndex].Lock()
 	defer mutexes[shardIndex].Unlock()
 
@@ -138,11 +136,9 @@ func CountWordsParallel(essayURLs []string, config config2.Config) {
 			semaphore <- struct{}{}
 
 			fetchEssay(url, nil)
-			// Release the semaphore by removing an element
 			<-semaphore
 		}(url)
 	}
 
-	// Wait for all goroutines to complete
 	wg.Wait()
 }
