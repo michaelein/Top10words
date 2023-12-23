@@ -13,7 +13,7 @@ import (
 
 var mutex sync.Mutex
 var mutexes []sync.Mutex
-var numShards = 10
+var numShards = 4
 var shardedMaps = make([]map[string]int, numShards)
 
 func init() {
@@ -24,6 +24,7 @@ func init() {
 	// Initialize mutexes for each shard
 	mutexes = make([]sync.Mutex, numShards)
 }
+
 func extractWordsFromHTML(htmlContent []byte) []string {
 	var words []string
 

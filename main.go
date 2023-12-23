@@ -8,7 +8,7 @@ import (
 
 func main() {
 	startTime := time.Now()
-	config, err := config2.LoadConfig("./config/config.yaml") // Adjust the file extension based on your configuration file format
+	config, err := config2.LoadConfig("./config/config.yaml")
 	if err != nil {
 		fmt.Println("Error loading config:", err)
 		return
