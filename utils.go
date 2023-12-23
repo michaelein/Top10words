@@ -1,6 +1,8 @@
 package main
 
 import (
+	config2 "awesomeProject/config"
+	"bufio"
 	"fmt"
 	"io"
 	"net/http"
@@ -45,4 +47,37 @@ func downloadFile(url, outputPath string) error {
 
 	_, err = io.Copy(file, response.Body)
 	return err
+}
+func downloadAndReadFile(config config2.Config) ([]string, error) {
+	// Download file
+	err := downloadFile(config.FileURL, config.OutputPath)
+	if err != nil {
+		return nil, fmt.Errorf("error downloading file: %v", err)
+	}
+
+	// Read URLs from file
+	file, err := os.Open(config.OutputPath)
+	if err != nil {
+		return nil, fmt.Errorf("error opening file: %v", err)
+	}
+	defer file.Close()
+
+	var urls []string
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		urls = append(urls, scanner.Text())
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("error reading file: %v", err)
+	}
+
+	return urls, nil
+}
+func removeFile(config config2.Config) {
+	// Remove the file after processing
+	err := os.Remove(config.OutputPath)
+	if err != nil {
+		fmt.Println("Error removing file:", err)
+	}
 }

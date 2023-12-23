@@ -2,8 +2,6 @@ package config
 
 import "github.com/spf13/viper"
 
-// Config represents the structure of the configuration file
-// Config represents the structure of the configuration file
 type Config struct {
 	BatchSize               int      `mapstructure:"batchSize"`
 	NumGoroutinesMultiplier int      `mapstructure:"numGoroutinesMultiplier"`
@@ -15,7 +13,6 @@ type Config struct {
 func LoadConfig(filePath string) (Config, error) {
 	var config Config
 
-	// Set the configuration file path
 	viper.SetConfigFile(filePath)
 
 	// Read the configuration file
