@@ -12,14 +12,17 @@ import (
 )
 
 var mutex sync.Mutex
-var mutex2 sync.Mutex
-var numShards = 6
+var mutexes []sync.Mutex
+var numShards = 10
 var shardedMaps = make([]map[string]int, numShards)
 
 func init() {
 	for i := 0; i < numShards; i++ {
 		shardedMaps[i] = make(map[string]int)
 	}
+
+	// Initialize mutexes for each shard
+	mutexes = make([]sync.Mutex, numShards)
 }
 func extractWordsFromHTML(htmlContent []byte) []string {
 	var words []string
@@ -90,8 +93,9 @@ func fetchEssay(url string, wg *sync.WaitGroup) {
 func tokenizeAndCount(words []string) {
 	shardIndex := getShardIndex(strings.Join(words, ""))
 
-	mutex2.Lock()
-	defer mutex2.Unlock()
+	// Acquire the mutex for the specific shard
+	mutexes[shardIndex].Lock()
+	defer mutexes[shardIndex].Unlock()
 
 	for _, word := range words {
 		if isValidWord(word) {

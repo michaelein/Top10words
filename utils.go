@@ -49,6 +49,9 @@ func downloadFile(url, outputPath string) error {
 	return err
 }
 func downloadAndReadFile(config config2.Config) ([]string, error) {
+	if _, err := os.Stat(config.OutputPath); err == nil {
+		removeFile(config)
+	}
 	err := downloadFile(config.FileURL, config.OutputPath)
 	if err != nil {
 		return nil, fmt.Errorf("error downloading file: %v", err)
