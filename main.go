@@ -9,6 +9,7 @@ import (
 func main() {
 	startTime := time.Now()
 	config, err := config2.LoadConfig("./config/config.yaml")
+
 	if err != nil {
 		fmt.Println("Error loading config:", err)
 		return
@@ -24,23 +25,22 @@ func main() {
 }
 
 func processUrls(config config2.Config) error {
-	batchSize := config.BatchSize
 	urls, err := downloadAndReadFile(config)
 	if err != nil {
 		return err
 	}
 
-	processBatches(urls, config, batchSize)
-	printTopWords()
+	processBatches(urls, config)
+	printTopWords(config.TopNums)
 	removeFile(config)
 
 	return nil
 }
 
-func processBatches(urls []string, config config2.Config, batchSize int) {
+func processBatches(urls []string, config config2.Config) {
 	totalCount := 0
-	for i := 0; i < len(urls); i += batchSize {
-		end := i + batchSize
+	for i := 0; i < len(urls); i += config.BatchSize {
+		end := i + config.BatchSize
 		if end > len(urls) {
 			end = len(urls)
 		}

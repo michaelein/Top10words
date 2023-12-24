@@ -16,9 +16,9 @@ type WordCount struct {
 	Count int
 }
 
-func printTopWords() {
+func printTopWords(topNums int) {
 	fmt.Println("Top 10 words:")
-	for i := 0; i < 10 && len(wordCounts) > 0; i++ {
+	for i := 0; i < topNums && len(wordCounts) > 0; i++ {
 		maxWord := findMaxWord(wordCounts)
 		fmt.Printf("%s: %d\n", maxWord.Word, maxWord.Count)
 		delete(wordCounts, maxWord.Word)
@@ -44,7 +44,11 @@ func downloadFile(url, outputPath string) error {
 	if err != nil {
 		return err
 	}
-	defer response.Body.Close()
+	defer func() {
+		if cerr := response.Body.Close(); cerr != nil {
+			fmt.Println("Error closing response body:", cerr)
+		}
+	}()
 
 	file, err := os.Create(outputPath)
 	if err != nil {
@@ -59,10 +63,10 @@ func downloadAndReadFile(config config2.Config) ([]string, error) {
 	if _, err := os.Stat(config.OutputPath); err == nil {
 		removeFile(config)
 	}
-	/*err := downloadFile(config.FileURL, config.OutputPath)
+	err := downloadFile(config.FileURL, config.OutputPath)
 	if err != nil {
 		return nil, fmt.Errorf("error downloading file: %v", err)
-	}*/
+	}
 
 	file, err := os.Open(config.OutputPath)
 	if err != nil {
@@ -74,7 +78,11 @@ func downloadAndReadFile(config config2.Config) ([]string, error) {
 	for scanner.Scan() {
 		urls = append(urls, scanner.Text())
 	}
-	defer file.Close()
+	defer func() {
+		if err := file.Close(); err != nil {
+			fmt.Println("Error closing file:", err)
+		}
+	}()
 
 	if err := scanner.Err(); err != nil {
 		return nil, fmt.Errorf("error reading file: %v", err)
@@ -83,8 +91,8 @@ func downloadAndReadFile(config config2.Config) ([]string, error) {
 	return urls, nil
 }
 func removeFile(config config2.Config) {
-	/*err := os.Remove(config.OutputPath)
+	err := os.Remove(config.OutputPath)
 	if err != nil {
 		fmt.Println("Error removing file:", err)
-	}*/
+	}
 }

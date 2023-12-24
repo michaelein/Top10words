@@ -8,6 +8,7 @@ type Config struct {
 	URLs                    []string `mapstructure:"urls"`
 	FileURL                 string   `mapstructure:"fileURL"`
 	OutputPath              string   `mapstructure:"outputPath"`
+	TopNums                 int      `mapstructure:"TopNums"`
 }
 
 func LoadConfig(filePath string) (Config, error) {

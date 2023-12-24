@@ -118,4 +118,5 @@ func CountWordsParallel(essayURLs []string, config config2.Config) {
 	}
 
 	wg.Wait()
+	close(semaphore)
 }

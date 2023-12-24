@@ -2,3 +2,4 @@ batchSize: 20
 fileURL: "https://drive.google.com/uc?export=download&id=1TF4RPuj8iFwpa-lyhxG67V8NDlktmTGi"
 outputPath: "urls.txt"
 NumGoroutinesMultiplier: 32
+TopNums: 10
