@@ -12,18 +12,6 @@ import (
 )
 
 var mutex sync.Mutex
-var mutexes []sync.Mutex
-var numShards = 4
-var shardedMaps = make([]map[string]int, numShards)
-
-func init() {
-	for i := 0; i < numShards; i++ {
-		shardedMaps[i] = make(map[string]int)
-	}
-
-	// Initialize mutexes for each shard
-	mutexes = make([]sync.Mutex, numShards)
-}
 
 func extractWordsFromHTML(htmlContent []byte) []string {
 	var words []string
@@ -91,18 +79,14 @@ func fetchEssay(url string, wg *sync.WaitGroup) {
 	tokenizeAndCount(words)
 }
 func tokenizeAndCount(words []string) {
-	shardIndex := getShardIndex(strings.Join(words, ""))
-
-	mutexes[shardIndex].Lock()
-	defer mutexes[shardIndex].Unlock()
-
+	shardMap := make(map[string]int)
 	for _, word := range words {
 		if isValidWord(word) {
-			shardedMaps[shardIndex][word]++
+			shardMap[word]++
 		}
 	}
 
-	combineShardedMap(shardedMaps[shardIndex])
+	combineShardedMap(shardMap)
 }
 
 func combineShardedMap(shardMap map[string]int) {
@@ -112,14 +96,6 @@ func combineShardedMap(shardMap map[string]int) {
 	for word, count := range shardMap {
 		wordCounts[word] += count
 	}
-}
-
-func getShardIndex(content string) int {
-	hash := 0
-	for _, char := range content {
-		hash += int(char)
-	}
-	return hash % numShards
 }
 
 func CountWordsParallel(essayURLs []string, config config2.Config) {

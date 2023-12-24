@@ -1,3 +1,4 @@
+Using Go, the following program counts the most frequently occurring words in URLs
 Fetching a list of essays and counting the top 10 words from all the
 essays combined.
 A valid word will:

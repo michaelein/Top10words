@@ -59,10 +59,10 @@ func downloadAndReadFile(config config2.Config) ([]string, error) {
 	if _, err := os.Stat(config.OutputPath); err == nil {
 		removeFile(config)
 	}
-	err := downloadFile(config.FileURL, config.OutputPath)
+	/*err := downloadFile(config.FileURL, config.OutputPath)
 	if err != nil {
 		return nil, fmt.Errorf("error downloading file: %v", err)
-	}
+	}*/
 
 	file, err := os.Open(config.OutputPath)
 	if err != nil {
@@ -83,8 +83,8 @@ func downloadAndReadFile(config config2.Config) ([]string, error) {
 	return urls, nil
 }
 func removeFile(config config2.Config) {
-	err := os.Remove(config.OutputPath)
+	/*err := os.Remove(config.OutputPath)
 	if err != nil {
 		fmt.Println("Error removing file:", err)
-	}
+	}*/
 }

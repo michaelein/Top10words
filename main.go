@@ -13,13 +13,31 @@ func main() {
 		fmt.Println("Error loading config:", err)
 		return
 	}
-	//TODO validate urls
-	batchSize := config.BatchSize
-	urls, err := downloadAndReadFile(config)
-	if err != nil {
+
+	if err := processUrls(config); err != nil {
 		fmt.Println("Error:", err)
 		return
 	}
+
+	elapsedTime := time.Now().Sub(startTime)
+	fmt.Println("Total time taken:", elapsedTime)
+}
+
+func processUrls(config config2.Config) error {
+	batchSize := config.BatchSize
+	urls, err := downloadAndReadFile(config)
+	if err != nil {
+		return err
+	}
+
+	processBatches(urls, config, batchSize)
+	printTopWords()
+	removeFile(config)
+
+	return nil
+}
+
+func processBatches(urls []string, config config2.Config, batchSize int) {
 	totalCount := 0
 	for i := 0; i < len(urls); i += batchSize {
 		end := i + batchSize
@@ -27,12 +45,8 @@ func main() {
 			end = len(urls)
 		}
 		batch := urls[i:end]
-		totalCount = totalCount + len(batch)
+		totalCount += len(batch)
 		fmt.Printf("totalCount: %v\n", totalCount)
 		CountWordsParallel(batch, config)
 	}
-	printTopWords()
-	elapsedTime := time.Now().Sub(startTime)
-	removeFile(config)
-	fmt.Println("Total time taken:", elapsedTime)
 }
