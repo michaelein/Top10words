@@ -13,7 +13,7 @@ func main() {
 		fmt.Println("Error loading config:", err)
 		return
 	}
-
+	//TODO validate urls
 	batchSize := config.BatchSize
 	urls, err := downloadAndReadFile(config)
 	if err != nil {

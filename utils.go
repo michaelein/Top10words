@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"sort"
 )
 
 var wordCounts = make(map[string]int)
@@ -18,18 +17,26 @@ type WordCount struct {
 }
 
 func printTopWords() {
-	sortedWordCounts := make([]WordCount, 0, len(wordCounts))
-	for word, count := range wordCounts {
-		sortedWordCounts = append(sortedWordCounts, WordCount{word, count})
-	}
-	sort.Slice(sortedWordCounts, func(i, j int) bool {
-		return sortedWordCounts[i].Count > sortedWordCounts[j].Count
-	})
-
 	fmt.Println("Top 10 words:")
-	for i := 0; i < 10 && i < len(sortedWordCounts); i++ {
-		fmt.Printf("%s: %d\n", sortedWordCounts[i].Word, sortedWordCounts[i].Count)
+	for i := 0; i < 10 && len(wordCounts) > 0; i++ {
+		maxWord := findMaxWord(wordCounts)
+		fmt.Printf("%s: %d\n", maxWord.Word, maxWord.Count)
+		delete(wordCounts, maxWord.Word)
 	}
+}
+
+func findMaxWord(wordCounts map[string]int) WordCount {
+	var maxWord WordCount
+	maxCount := 0
+
+	for word, count := range wordCounts {
+		if count > maxCount {
+			maxCount = count
+			maxWord = WordCount{word, count}
+		}
+	}
+
+	return maxWord
 }
 
 func downloadFile(url, outputPath string) error {
